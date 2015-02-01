@@ -17,7 +17,7 @@ app.get("/",function  (req,res) {
     res.send("Welcome To Site Up https://siteup.herokuapp.com/?url=$url&timeout=1000");
 })
 
-app.get("/siteup.png", function(req, res) {
+app.get("/siteup", function(req, res) {
 
     if (!req.query.url) {
         return res.send("missing url");
