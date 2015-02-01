@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 
-app.get("/",function  (req,res) {
+app.get("/", function(req, res) {
     res.send("Welcome To Site Up https://siteup.herokuapp.com/?url=$url&timeout=1000");
 })
 
@@ -21,17 +21,17 @@ app.get("/siteup", function(req, res) {
 
     if (!req.query.url) {
         return res.send("missing url");
-    }else{
+    } else {
         var url = req.query.url;
     }
 
     if (req.query.timeout) {
         var timeout = req.query.timeout;
-    }else{
+    } else {
         var timeout = 10000;
     }
 
-    (function(response,url,timeout) {
+    (function(response, url, timeout) {
 
         var url = url;
         var options = {
@@ -39,11 +39,17 @@ app.get("/siteup", function(req, res) {
             timeout: timeout
         };
 
-        request(options, function(err) {
+        request(options, function(err, res) {
             if (!err) {
-                response.sendFile('webonline.jpg', {
-                    root: path.join(__dirname, '/public/img')
-                });
+                if (response.statusCode == 200) {
+                    response.sendFile('webonline.jpg', {
+                        root: path.join(__dirname, '/public/img')
+                    });
+                } else {
+                    response.sendFile('webdown.jpg', {
+                        root: path.join(__dirname, '/public/img')
+                    });
+                }
             } else {
                 response.sendFile('webdown.jpg', {
                     root: path.join(__dirname, '/public/img')
@@ -51,7 +57,7 @@ app.get("/siteup", function(req, res) {
             }
         });
 
-    })(res,url,timeout);
+    })(res, url, timeout);
 })
 
 
