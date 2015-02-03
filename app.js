@@ -1,8 +1,11 @@
+'use strict';
+
 var express = require('express');
 var logger = require('morgan');
 var path = require('path');
 var request = require('request');
 var bodyParser = require('body-parser');
+var normalizeUrl = require('normalize-url');
 
 var app = express();
 
@@ -13,27 +16,26 @@ app.use(bodyParser.urlencoded({
 }));
 
 
-app.get("/", function(req, res) {
-    res.send("Welcome To Site Up https://siteup.herokuapp.com/?url=$url&timeout=1000");
-})
+app.get('/', function(req, res) {
+    res.send('Welcome To Site Up https://siteup.herokuapp.com/?url=$url&timeout=1000');
+});
 
-app.get("/siteup", function(req, res) {
+app.get('/siteup', function(req, res) {
 
     if (!req.query.url) {
-        return res.send("missing url");
+        return res.send('missing url');
     } else {
-        var url = req.query.url;
+        var checkurl = normalizeUrl(req.query.url);
     }
 
+    var timeout = 10000;
+
     if (req.query.timeout) {
-        var timeout = req.query.timeout;
-    } else {
-        var timeout = 10000;
+        timeout = req.query.timeout;
     }
 
     (function(response, url, timeout) {
 
-        var url = url;
         var options = {
             url: url,
             timeout: timeout
@@ -41,7 +43,7 @@ app.get("/siteup", function(req, res) {
 
         request(options, function(err, res) {
             if (!err) {
-                if (response.statusCode == 200) {
+                if (response.statusCode === 200) {
                     response.sendFile('webonline.jpg', {
                         root: path.join(__dirname, '/public/img')
                     });
@@ -57,8 +59,8 @@ app.get("/siteup", function(req, res) {
             }
         });
 
-    })(res, url, timeout);
-})
+    })(res, checkurl, timeout);
+});
 
 
 // catch 404 and forward to error handler
